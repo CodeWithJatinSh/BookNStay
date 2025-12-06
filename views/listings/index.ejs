@@ -8,6 +8,9 @@
   </head>
   <body>
     <h1>Available Listings</h1>
+    <form action="/listings/new" method="GET">
+      <button type="submit">Create New Listing</button>
+    </form>
     <ul>
       <% listings.forEach(function(listing) { %>
         <li>

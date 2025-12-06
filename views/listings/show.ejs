@@ -11,5 +11,7 @@
     <p><%= listing.description %></p>
     <p>₹<%= listing.price %> per night</p>
     <p><%= listing.location %>, <%= listing.country %></p>
+    <form action="/listings/<%= listing._id %>/edit" method="GET">
+      <button type="submit">Edit Listing</button>
   </body>
 </html>
