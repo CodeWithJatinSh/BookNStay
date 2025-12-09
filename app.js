@@ -6,47 +6,47 @@ const mongoose = require('mongoose');
 const path = require('path');
 const methodOverride = require('method-override');
 const multer = require('multer');
+const ejsMate = require('ejs-mate');
 
-// Multer setup to store uploaded images locally
+// Setting up EJS Mate as the templating engine
+app.engine('ejs', ejsMate);
+app.set('view engine', 'ejs');
+
+// Multer setup to store uploaded images locally (in uploads folder)
 const upload = multer({ dest: 'uploads/' });
 
 // MongoDB URI
 const MONGO_URI = 'mongodb://localhost:27017/listingsdb';
 
-// Models & Data
+// Models
 const Listing = require('./models/listing');
-const initData = require('./init/data.js');
 
 // Connecting to MongoDB
 main()
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.log(err));
 
-// Async function to handle DB connection
 async function main() {
   await mongoose.connect(MONGO_URI);
 }
 
-// Middleware to support PUT and DELETE methods via forms
-app.use(methodOverride('_method'));
-
-// Middleware for serving static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static('uploads')); // serve uploaded images
-
-// Setting up EJS as the templating engine
-app.set('view engine', 'ejs');
-
 // Setting the views directory
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware to parse JSON and URL-encoded data
-app.use(express.json());
+// Middleware for static files
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static('uploads')); // Serve uploaded images
+
+// Parse request body
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Override method for PUT & DELETE
+app.use(methodOverride('_method'));
 
 // Home Route
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.redirect('/listings');
 });
 
 // Route to display all listings
@@ -60,9 +60,27 @@ app.get('/listings', async (req, res) => {
   }
 });
 
-// Route to render new listing form
+// Route to render form for adding a new listing
 app.get('/listings/new', (req, res) => {
-  res.render('listings/new.ejs');
+  res.render('listings/new');
+});
+
+// Route to create a new listing
+app.post('/listings', upload.single('image'), async (req, res) => {
+  try {
+    const listingData = req.body;
+
+    if (req.file) {
+      listingData.image = `/uploads/${req.file.filename}`;
+    }
+
+    const newListing = new Listing(listingData);
+    await newListing.save();
+    res.redirect('/listings');
+  } catch (err) {
+    console.log("Error creating listing:", err);
+    res.status(500).send("Something went wrong");
+  }
 });
 
 // Route to show a specific listing
@@ -77,7 +95,7 @@ app.get('/listings/:id', async (req, res) => {
   }
 });
 
-// Route to edit a listing
+// Route to render edit form
 app.get('/listings/:id/edit', async (req, res) => {
   try {
     const { id } = req.params;
@@ -89,18 +107,29 @@ app.get('/listings/:id/edit', async (req, res) => {
   }
 });
 
-// Route to update a listing
+// Update Listing (Image optional)
 app.put('/listings/:id', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedData = req.body;
+    let listing = await Listing.findById(id);
 
-    // Only update image if new file uploaded
-    if (req.file) {
-      updatedData.image = req.file.path;
+    if (!listing) {
+      return res.status(404).send("Listing not found");
     }
 
-    await Listing.findByIdAndUpdate(id, updatedData, { new: true, runValidators: true });
+    // Update text fields
+    listing.title = req.body.title;
+    listing.description = req.body.description;
+    listing.price = req.body.price;
+    listing.location = req.body.location;
+    listing.country = req.body.country;
+
+    // Update image only if new one is uploaded
+    if (req.file) {
+      listing.image = `/uploads/${req.file.filename}`;
+    }
+
+    await listing.save();
     res.redirect(`/listings/${id}`);
   } catch (err) {
     console.log("Error updating listing:", err);
@@ -108,26 +137,19 @@ app.put('/listings/:id', upload.single('image'), async (req, res) => {
   }
 });
 
-// Route to create a new listing
-app.post('/listings', upload.single('image'), async (req, res) => {
+// Delete Listing
+app.delete('/listings/:id', async (req, res) => {
   try {
-    const listingData = req.body;
-
-    if (req.file) {
-      listingData.image = req.file.path;
-    }
-
-    const newListing = new Listing(listingData);
-    await newListing.save();
-
-    res.redirect(`/listings`);
+    console.log("Deleting listing:", req.params.id);
+    await Listing.findByIdAndDelete(req.params.id);
+    res.redirect('/listings');
   } catch (err) {
-    console.log("Error creating listing:", err);
-    res.status(500).send("Something went wrong");
+    console.log("Delete error:", err);
+    res.status(500).send("Delete failed");
   }
 });
 
 // Starting the Server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });

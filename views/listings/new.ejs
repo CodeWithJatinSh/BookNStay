@@ -1,33 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Listing</title>
-</head>
+<% layout('layouts/boilerplate.ejs') %>
 <body>
-    <h1>Create New Listing</h1>
 
     <form action="/listings" method="POST" enctype="multipart/form-data">
-        <label>Title:</label>
-        <input type="text" name="title" required><br>
+    <div class="container mt-4 col-md-6">
+        <h1 class="new-listing-title text-center mb-4">Create New Listing</h1>
+        <div class="mb-3">
+        <label class="form-label">Title:</label>
+        <input type="text" name="title" class="form-control" required ><br>
+        </div>
 
-        <label>Description:</label>
-        <textarea name="description" required></textarea><br>
+        <div class="mb-3">
+        <label class="form-label">Description:</label>
+        <textarea name="description" class="form-control" required></textarea><br>
+        </div>
 
-        <label>Price per night (₹):</label>
-        <input type="number" name="price" required><br>
+        <div class="mb-3">
+        <label class="form-label">Price per night (₹):</label>
+        <input type="number" name="price" class="form-control" required><br>
+        </div>
 
-        <label>Location:</label>
-        <input type="text" name="location" required><br>
+        <div class="mb-3">
+        <label class="form-label">Location:</label>
+        <input type="text" name="location" class="form-control" required><br>
+        </div>
 
-        <label>Country:</label>
-        <input type="text" name="country" required><br>
+        <div class="mb-3">
+        <label class="form-label">Country:</label>
+        <input type="text" name="country" class="form-control" required><br>
+         </div>
 
-        <label>Image:</label>
-        <input type="file" name="image" accept="image/*"><br><br>
-
-        <button type="submit">Create Listing</button>
+        <div class="mb-3">
+        <label class="form-label">Image:</label>
+        <input type="file" name="image" class="form-control" accept="image/*"><br><br>
+        </div>
+        <button type="submit" class="Create"><b>Create Listing</b></button>
+    </div>
     </form>
 </body>
-</html>
+

@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Listings</title>
-    <link rel="stylesheet" href="/stylesheets/style.css" />
-  </head>
-  <body>
-    <h1>Available Listings</h1>
-    <form action="/listings/new" method="GET">
-      <button type="submit">Create New Listing</button>
-    </form>
-    <ul>
-      <% listings.forEach(function(listing) { %>
-        <li>
-          <h2><%= listing.title %></h2>
-          <p><%= listing.description %></p>
-          <p>Price: $<%= listing.price %> per night</p>
-          <form action="/listings/<%= listing._id %>" method="get">
-            <button>View Details</button>
-            </form>
-        </li>
-      <% }); %>
-    </ul>
-  </body>
+<% layout('layouts/boilerplate.ejs') %>
+<% var title = "All Listings | BookNStay"; %>
+
+<h1 class="all-listings-title">All Listings</h1>
+
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g-4">
+  <% listings.forEach(listing => { %>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title"><%= listing.title %></h5>
+        <p class="card-text flex-grow-1">
+          <%= listing.description %><br>
+          <strong>&#8377;<%= listing.price %> / Night</strong>
+        </p>
+        <a href="/listings/<%= listing._id %>" class="btn btn-primary mt-auto">View Details</a>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+
+
+
+
