@@ -68,18 +68,29 @@ app.get('/listings/new', (req, res) => {
 // Route to create a new listing
 app.post('/listings', upload.single('image'), async (req, res) => {
   try {
+    // 1. Get the text data (title, price, description, etc.)
     const listingData = req.body;
 
+    // 2. Handle the Image Upload
+    // We check if a file exists. If it does, we construct the OBJECT correctly.
     if (req.file) {
-      listingData.image = `/uploads/${req.file.filename}`;
+      listingData.image = {
+        url: `/uploads/${req.file.filename}`, // Create the URL path
+        filename: req.file.filename           // Store the filename
+      };
     }
 
+    // 3. Create and Save
     const newListing = new Listing(listingData);
     await newListing.save();
+    
+    console.log("Listing saved successfully!");
     res.redirect('/listings');
+
   } catch (err) {
     console.log("Error creating listing:", err);
-    res.status(500).send("Something went wrong");
+    // Suggestion: Send the error detail to the browser so you can see it
+    res.status(500).send(err.message); 
   }
 });
 
@@ -108,11 +119,13 @@ app.get('/listings/:id/edit', async (req, res) => {
 });
 
 // Update Listing (Image optional)
+// Update Listing
 app.put('/listings/:id', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Find the listing
     let listing = await Listing.findById(id);
-
     if (!listing) {
       return res.status(404).send("Listing not found");
     }
@@ -124,16 +137,19 @@ app.put('/listings/:id', upload.single('image'), async (req, res) => {
     listing.location = req.body.location;
     listing.country = req.body.country;
 
-    // Update image only if new one is uploaded
+    // Update image ONLY if a new file was uploaded
     if (req.file) {
-      listing.image = `/uploads/${req.file.filename}`;
+      listing.image = {
+        url: `/uploads/${req.file.filename}`,
+        filename: req.file.filename
+      };
     }
 
     await listing.save();
     res.redirect(`/listings/${id}`);
   } catch (err) {
     console.log("Error updating listing:", err);
-    res.status(500).send("Something went wrong");
+    res.status(500).send(err.message);
   }
 });
 

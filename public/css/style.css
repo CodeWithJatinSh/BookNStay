@@ -1,12 +1,12 @@
  body{
-    background-color: rgb(248, 253, 255);
+    background-color: #f9fafb;
  }
 
 .navbar {
     padding-top: 4px;
     padding-bottom: 4px;
     min-height: 60px;
-    background-color: #d9ecfa; /* light blue background */
+    background-color: #1e3a8a; /* light blue background */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow */
 }
 
@@ -28,7 +28,7 @@
 
 /* Footer Styling */
 .footer-section {
-    background: #d9ecfa;
+    background: #1e3a8a;
     border-top: 1px solid #ddd;
     margin-top: 50px;
 }
@@ -36,14 +36,14 @@
 .footer-title {
     font-size: 1.4rem;
     font-weight: bold;
-    color: #1a1a1a;
+    color: #f9fafb;
 }
 
 .footer-heading {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 12px;
-    color: #1a1a1a;
+    color: #f9fafb;
     text-transform: uppercase;
 }
 
@@ -51,6 +51,7 @@
     font-size: 0.95rem;
     line-height: 1.5;
     max-width: 85%;
+    color: #cbd5e1 !important;
 }
 
 .footer-links {
@@ -64,13 +65,13 @@
 
 .footer-links a {
     text-decoration: none;
-    color: #6c757d;
+    color: #f9fafb;
     font-size: 0.95rem;
     transition: color 0.3s;
 }
 
 .footer-links a:hover {
-    color: #000;
+    color: #f9fafb;
 }
 
 .footer-social a {
@@ -81,7 +82,7 @@
     font-size: 1rem;
     padding-top: 7px;
     text-align: center;
-    color: #6c757d;
+    color: #f9fafb;
     margin-right: 10px;
     border: 1px solid #ddd;
     transition: all 0.3s ease;
@@ -92,6 +93,14 @@
     color: #fff;
     border-color: #000;
     transform: translateY(-4px);
+}
+
+.footer-bottom, .copyright-text { 
+    color: #94a3b8 !important; 
+}
+
+.footer-section p {
+    color: #cbd5e1 !important;
 }
 
 .all-listings-title {
